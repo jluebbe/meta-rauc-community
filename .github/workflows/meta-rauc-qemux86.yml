@@ -69,15 +69,15 @@ jobs:
       - name: Build rauc, rauc-native
         run: |
           source poky/oe-init-build-env build
-          bitbake rauc rauc-native
-      - name: Build core-image-miminal
+          bitbake rauc rauc-native --runall=fetch
+      - name: Build core-image-mimimal
         run: |
           source poky/oe-init-build-env build
-          bitbake core-image-miminal
+          bitbake core-image-mimimal --runall=fetch
       - name: Build RAUC Bundle
         run: |
           source poky/oe-init-build-env build
-          bitbake update-bundle
+          bitbake update-bundle --runall=fetch
       - name: Cache Data
         env:
           CACHE_KEY: ${{ secrets.YOCTO_CACHE_KEY }}
