@@ -34,7 +34,7 @@ jobs:
     steps:
       - name: Install required packages
         run: |
-          sudo apt-get -q -y --no-install-recommends install diffstat
+          sudo apt-get -q -y --no-install-recommends install diffstat tree
       - name: Checkout
         uses: actions/checkout@v4
       «% for layer_name, layer_info in layers.items() %»
@@ -99,6 +99,10 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           rsync -rvx --ignore-existing build/downloads rauc-community-cache: || true
           rsync -rvx --ignore-existing build/sstate-cache rauc-community-cache: || true
+      - name: Show Artifacts
+        run: |
+          source poky/oe-init-build-env build
+          tree --du -h tmp/deploy/images || true
 """.lstrip()
 
 template = Template(
