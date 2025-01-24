@@ -44,8 +44,8 @@ jobs:
         run: |
           source poky/oe-init-build-env build
           bitbake-layers add-layer ../meta-rauc
-          bitbake-layers add-layer ../meta-arm/meta-arm
           bitbake-layers add-layer ../meta-arm/meta-arm-toolchain
+          bitbake-layers add-layer ../meta-arm/meta-arm
           bitbake-layers add-layer ../meta-rockchip
           bitbake-layers add-layer ../meta-rauc-rockchip
           if [ -f ~/.yocto/auto.conf ]; then
