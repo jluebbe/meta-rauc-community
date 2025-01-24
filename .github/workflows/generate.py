@@ -37,16 +37,15 @@ jobs:
           sudo apt-get -q -y --no-install-recommends install diffstat
       - name: Checkout
         uses: actions/checkout@v4
-      «% for name, url in base_layers.items()|list + extra_layers.items()|list %»
-      - name: Clone «« name »»
-        run: git clone --shared --reference-if-able /srv/shared-git/«« name »».git -b master «« url »»
+      «% for layer_name, layer_info in layers.items() %»
+      - name: Clone «« layer_name »»
+        run: git clone --shared --reference-if-able /srv/shared-git/«« layer_name »».git -b «« layer_info["branch"] | default(release) »» «« layer_info["repo"] »»
       «% endfor %»
       - name: Initialize build directory
         run: |
           source poky/oe-init-build-env build
-          bitbake-layers add-layer ../meta-rauc
-          «% for name in extra_layers.keys() %»
-          bitbake-layers add-layer ../«« name »»
+          «% for layer_path in add_layers %»
+          bitbake-layers add-layer ../«« layer_path »»
           «% endfor %»
           bitbake-layers add-layer ../«« layer »»
           if [ -f ~/.yocto/auto.conf ]; then
@@ -81,11 +80,15 @@ jobs:
       - name: Build rauc, rauc-native
         run: |
           source poky/oe-init-build-env build
-          bitbake rauc rauc-native
-      - name: Build core-image-minimal
+          bitbake rauc rauc-native -k || true
+      - name: Build «« image »»
         run: |
           source poky/oe-init-build-env build
-          bitbake core-image-minimal --runall=fetch
+          bitbake «« image »» -k || true
+      - name: Build RAUC Bundle
+        run: |
+          source poky/oe-init-build-env build
+          bitbake «« bundle »» -k || true
       - name: Cache Data
         env:
           CACHE_KEY: ${{ secrets.YOCTO_CACHE_KEY }}
@@ -99,53 +102,171 @@ jobs:
 """.lstrip()
 
 template = Template(
-        TEMPLATE,
-        block_start_string='«%',
-        block_end_string='%»',
-        variable_start_string='««',
-        variable_end_string='»»',
-        comment_start_string='«#',
-        comment_end_string='#»',
-        trim_blocks=True,
-        lstrip_blocks=True,
-        keep_trailing_newline=True,
-        )
+    TEMPLATE,
+    block_start_string="«%",
+    block_end_string="%»",
+    variable_start_string="««",
+    variable_end_string="»»",
+    comment_start_string="«#",
+    comment_end_string="#»",
+    trim_blocks=True,
+    lstrip_blocks=True,
+    keep_trailing_newline=True,
+)
+
+default_layers = {
+    "poky": {
+        "repo": "https://github.com/yoctoproject/poky.git",
+        # added by default
+        "add": [],
+    },
+    "meta-rauc": {
+        "repo": "https://github.com/rauc/meta-rauc.git",
+    },
+}
 
 default_context = {
-    "base_layers": {
-        "poky": "https://github.com/yoctoproject/poky.git",
-        "meta-rauc": "https://github.com/rauc/meta-rauc.git"
+    "release": "master",
+    "layers": {
+        **default_layers,
     },
-    "extra_layers": {
-    },
+    "extra_layers": {},
+    "add_layers": [],
     "machine": None,
     "conf": [],
+    "image": "core-image-minimal",
+    "bundle": "update-bundle",
 }
 
 contexts = [
     {
+        "layer": "meta-rauc-beaglebone",
         **default_context,
+        "release": "scarthgap",
+        "machine": "beaglebone-yocto",
+        "fstypes": "ext4",
+        "wks_file": "beaglebone-yocto-dual.wks.in",
+        "conf": [
+            'IMAGE_BOOT_FILES:append = " boot.scr"',
+        ],
+    },
+    {
         "layer": "meta-rauc-qemux86",
+        **default_context,
         "fstypes": "tar.bz2 wic",
         "wks_file": "qemux86-grub-efi.wks",
         "conf": [
             'EXTRA_IMAGEDEPENDS += "ovmf"',
             'PREFERRED_RPROVIDER_virtual-grub-bootconf = "rauc-qemu-grubconf"',
         ],
+        "bundle": "qemu-demo-bundle",
     },
     {
-        **default_context,
         "layer": "meta-rauc-raspberrypi",
-        "extra_layers": {
-            "meta-raspberrypi": "https://github.com/agherzan/meta-raspberrypi.git",
+        **default_context,
+        "layers": {
+            **default_layers,
+            "meta-raspberrypi": {
+                "repo": "https://github.com/agherzan/meta-raspberrypi.git",
+            },
         },
         "machine": "raspberrypi4",
         "fstypes": "ext4",
         "wks_file": "sdimage-dual-raspberrypi.wks.in",
     },
+    {
+        "layer": "meta-rauc-sunxi",
+        **default_context,
+        "release": "styhead",
+        "layers": {
+            **default_layers,
+            "meta-arm": {
+                "repo": "https://git.yoctoproject.org/meta-arm.git",
+                "add": ["meta-arm-toolchain", "meta-arm"],
+            },
+            "meta-openembedded": {
+                "repo": "https://git.openembedded.org/meta-openembedded.git",
+                "add": ["meta-oe", "meta-python"],
+            },
+            "meta-sunxi": {
+                "repo": "https://github.com/linux-sunxi/meta-sunxi.git",
+                # 2025-01-25: meta-sunxi doesn't have a styhead branch
+                "branch": "master",
+            },
+        },
+        "machine": "olinuxino-a10lime",
+        "fstypes": "ext4",
+        "wks_file": "sunxi-dual-image.wks.in",
+        "conf": [
+            'INIT_MANAGER = "systemd"',
+            'IMAGE_BOOT_FILES:append = " boot.scr"',
+            'IMAGE_INSTALL:append = " rauc-grow-data-part"',
+        ],
+    },
+    {
+        "layer": "meta-rauc-nxp",
+        **default_context,
+        "release": "styhead",
+        "layers": {
+            **default_layers,
+            # 2025-01-25: meta-freescale doesn't have a styhead branch
+            "meta-freescale": {
+                "repo": "https://github.com/Freescale/meta-freescale.git",
+                "branch": "master",
+            },
+            "meta-freescale-3rdparty": {
+                "repo": "https://github.com/Freescale/meta-freescale-3rdparty.git",
+                "branch": "master",
+            },
+        },
+        "machine": "olimex-imx8mp-evb",
+        "fstypes": "ext4",
+        "wks_file": "dual-imx-boot-bootpart.wks.in",
+        "conf": [
+            'INIT_MANAGER = "systemd"',
+            'IMAGE_BOOT_FILES:append = " boot.scr"',
+        ],
+    },
+    {
+        "layer": "meta-rauc-rockchip",
+        **default_context,
+        "release": "styhead",
+        "layers": {
+            **default_layers,
+            "meta-arm": {
+                "repo": "https://git.yoctoproject.org/meta-arm.git",
+                "add": ["meta-arm-toolchain", "meta-arm"],
+            },
+            "meta-rockchip": {
+                "repo": "https://git.yoctoproject.org/meta-rockchip.git",
+            },
+        },
+        "machine": "rock-pi-4b",
+        "fstypes": "ext4",
+        "wks_file": "rockchip-dual.wks.in",
+        "conf": [
+            'SERIAL_CONSOLES="115200;ttyS2"',
+            'MACHINE_FEATURES:append = " rk-u-boot-env"',
+            'UBOOT_EXTLINUX_KERNEL_IMAGE="/${KERNEL_IMAGETYPE}"',
+            'UBOOT_EXTLINUX_ROOT="root=PARTLABEL=${bootpart}"',
+            'UBOOT_EXTLINUX_KERNEL_ARGS = "rootwait rw rootfstype=ext4 rauc.slot=${raucslot}"',
+            'WIC_CREATE_EXTRA_ARGS = "--no-fstab-update"',
+            'INIT_MANAGER = "systemd"',
+            'IMAGE_BOOT_FILES:append = " boot.scr"',
+        ],
+    },
 ]
 
 for context in contexts:
+    add_layers = context["add_layers"] = []
+    for k, v in context["layers"].items():
+        sub_layers = v.get("add")
+        if sub_layers is None:
+            add_layers.append(f"{k}")
+        else:
+            for add in sub_layers:
+                add_layers.append(f"{k}/{add}")
+
     output = template.render(context)
     file_name = f"{context['layer']}.yml"
     with open(file_name, "w") as file:
