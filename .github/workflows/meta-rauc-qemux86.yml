@@ -70,10 +70,10 @@ jobs:
         run: |
           source poky/oe-init-build-env build
           bitbake rauc rauc-native --runall=fetch
-      - name: Build core-image-mimimal
+      - name: Build core-image-minimal
         run: |
           source poky/oe-init-build-env build
-          bitbake core-image-mimimal --runall=fetch
+          bitbake core-image-minimal --runall=fetch
       - name: Build RAUC Bundle
         run: |
           source poky/oe-init-build-env build
