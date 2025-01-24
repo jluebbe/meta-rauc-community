@@ -77,7 +77,7 @@ jobs:
       - name: Build RAUC Bundle
         run: |
           source poky/oe-init-build-env build
-          bitbake update-bundle --runall=fetch
+          bitbake qemu-demo-bundle --runall=fetch
       - name: Cache Data
         env:
           CACHE_KEY: ${{ secrets.YOCTO_CACHE_KEY }}
