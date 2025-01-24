@@ -1,24 +1,24 @@
-name: build meta-rauc-qemux86
+name: build meta-rauc-beaglebone
 
 on:
   push:
     branches:
       - master
     paths:
-      - '.github/workflows/meta-rauc-qemux86.yml'
-      - 'meta-rauc-qemux86/**'
+      - '.github/workflows/meta-rauc-beaglebone.yml'
+      - 'meta-rauc-beaglebone/**'
   pull_request:
     branches:
       - master
     paths:
-      - '.github/workflows/meta-rauc-qemux86.yml'
-      - 'meta-rauc-qemux86/**'
+      - '.github/workflows/meta-rauc-beaglebone.yml'
+      - 'meta-rauc-beaglebone/**'
   # allow rebuilding without a push
   workflow_dispatch: {}
 
 jobs:
   build:
-    name: meta-rauc-qemux86 Build
+    name: meta-rauc-beaglebone Build
     # run on self-hosted runner for the main repo or if vars.BUILD_RUNS_ON is set
     runs-on: >-
       ${{
@@ -33,14 +33,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Clone poky
-        run: git clone --shared --reference-if-able /srv/shared-git/poky.git -b master https://github.com/yoctoproject/poky.git
+        run: git clone --shared --reference-if-able /srv/shared-git/poky.git -b {{ release }} https://github.com/yoctoproject/poky.git
       - name: Clone meta-rauc
-        run: git clone --shared --reference-if-able /srv/shared-git/meta-rauc.git -b master https://github.com/rauc/meta-rauc.git
+        run: git clone --shared --reference-if-able /srv/shared-git/meta-rauc.git -b {{ release }} https://github.com/rauc/meta-rauc.git
       - name: Initialize build directory
         run: |
           source poky/oe-init-build-env build
           bitbake-layers add-layer ../meta-rauc
-          bitbake-layers add-layer ../meta-rauc-qemux86
+          bitbake-layers add-layer ../meta-rauc-beaglebone
           if [ -f ~/.yocto/auto.conf ]; then
             cp ~/.yocto/auto.conf conf/
             echo 'SOURCE_MIRROR_URL = "http://10.0.2.2/rauc-community/downloads"' >> conf/auto.conf
@@ -52,12 +52,12 @@ jobs:
             echo 'INHERIT += "rm_work"' >> conf/auto.conf
           fi
           echo 'DISTRO_FEATURES:remove = "alsa bluetooth usbgadget usbhost wifi nfs zeroconf pci 3g nfc x11 opengl ptest wayland vulkan"' >> conf/local.conf
+          echo 'MACHINE = "beaglebone-yocto"' >> conf/local.conf
           echo 'DISTRO_FEATURES:append = " rauc"' >> conf/local.conf
           echo 'IMAGE_INSTALL:append = " rauc"' >> conf/local.conf
-          echo 'IMAGE_FSTYPES = "tar.bz2 wic"' >> conf/local.conf
-          echo 'WKS_FILE = "qemux86-grub-efi.wks"' >> conf/local.conf
-          echo 'EXTRA_IMAGEDEPENDS += "ovmf"' >> conf/local.conf
-          echo 'PREFERRED_RPROVIDER_virtual-grub-bootconf = "rauc-qemu-grubconf"' >> conf/local.conf
+          echo 'IMAGE_FSTYPES = "ext4"' >> conf/local.conf
+          echo 'WKS_FILE = "beaglebone-yocto-dual.wks.in"' >> conf/local.conf
+          echo 'IMAGE_BOOT_FILES:append = " boot.scr"' >> conf/local.conf
       - name: Show configuration files
         run: |
           cd build/conf
@@ -70,10 +70,10 @@ jobs:
         run: |
           source poky/oe-init-build-env build
           bitbake rauc rauc-native
-      - name: Build core-image-minimal
+      - name: Build core-image-miminal
         run: |
           source poky/oe-init-build-env build
-          bitbake core-image-minimal --runall=fetch
+          bitbake core-image-miminal --runall=fetch
       - name: Cache Data
         env:
           CACHE_KEY: ${{ secrets.YOCTO_CACHE_KEY }}
