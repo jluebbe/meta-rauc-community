@@ -37,9 +37,9 @@ jobs:
       - name: Clone meta-rauc
         run: git clone --shared --reference-if-able /srv/shared-git/meta-rauc.git -b styhead https://github.com/rauc/meta-rauc.git
       - name: Clone meta-freescale
-        run: git clone --shared --reference-if-able /srv/shared-git/meta-freescale.git -b styhead https://github.com/Freescale/meta-freescale.git
+        run: git clone --shared --reference-if-able /srv/shared-git/meta-freescale.git -b master https://github.com/Freescale/meta-freescale.git
       - name: Clone meta-freescale-3rdparty
-        run: git clone --shared --reference-if-able /srv/shared-git/meta-freescale-3rdparty.git -b styhead https://github.com/Freescale/meta-freescale-3rdparty.git
+        run: git clone --shared --reference-if-able /srv/shared-git/meta-freescale-3rdparty.git -b master https://github.com/Freescale/meta-freescale-3rdparty.git
       - name: Initialize build directory
         run: |
           source poky/oe-init-build-env build
@@ -81,6 +81,10 @@ jobs:
         run: |
           source poky/oe-init-build-env build
           bitbake core-image-miminal --runall=fetch
+      - name: Build RAUC Bundle
+        run: |
+          source poky/oe-init-build-env build
+          bitbake update-bundle --runall=fetch
       - name: Cache Data
         env:
           CACHE_KEY: ${{ secrets.YOCTO_CACHE_KEY }}
