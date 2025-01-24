@@ -38,6 +38,8 @@ jobs:
         run: git clone --shared --reference-if-able /srv/shared-git/meta-rauc.git -b styhead https://github.com/rauc/meta-rauc.git
       - name: Clone meta-arm
         run: git clone --shared --reference-if-able /srv/shared-git/meta-arm.git -b styhead https://git.yoctoproject.org/meta-arm.git
+      - name: Clone meta-openembedded
+        run: git clone --shared --reference-if-able /srv/shared-git/meta-openembedded.git -b styhead https://git.openembedded.org/meta-openembedded.git
       - name: Clone meta-sunxi
         run: git clone --shared --reference-if-able /srv/shared-git/meta-sunxi.git -b master https://github.com/linux-sunxi/meta-sunxi.git
       - name: Initialize build directory
@@ -46,6 +48,8 @@ jobs:
           bitbake-layers add-layer ../meta-rauc
           bitbake-layers add-layer ../meta-arm/meta-arm-toolchain
           bitbake-layers add-layer ../meta-arm/meta-arm
+          bitbake-layers add-layer ../meta-openembedded/meta-oe
+          bitbake-layers add-layer ../meta-openembedded/meta-python
           bitbake-layers add-layer ../meta-sunxi
           bitbake-layers add-layer ../meta-rauc-sunxi
           if [ -f ~/.yocto/auto.conf ]; then
