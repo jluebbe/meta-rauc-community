@@ -80,15 +80,15 @@ jobs:
       - name: Build rauc, rauc-native
         run: |
           source poky/oe-init-build-env build
-          bitbake rauc rauc-native -k || true
+          bitbake rauc rauc-native
       - name: Build «« image »»
         run: |
           source poky/oe-init-build-env build
-          bitbake «« image »» -k || true
+          bitbake «« image »»
       - name: Build RAUC Bundle
         run: |
           source poky/oe-init-build-env build
-          bitbake «« bundle »» -k || true
+          bitbake «« bundle »»
       - name: Cache Data
         env:
           CACHE_KEY: ${{ secrets.YOCTO_CACHE_KEY }}
@@ -103,6 +103,15 @@ jobs:
         run: |
           source poky/oe-init-build-env build
           tree --du -h tmp/deploy/images || true
+      «% if artifacts %»
+      - name: Upload Artifacts
+        uses: forrest-runner/upload-artifact@main
+        with:
+          path: |
+            «% for artifact in artifacts %»
+            build/tmp/deploy/images/«« artifact »»
+            «% endfor %»
+      «% endif %»
 """.lstrip()
 
 template = Template(
@@ -140,6 +149,7 @@ default_context = {
     "conf": [],
     "image": "core-image-minimal",
     "bundle": "update-bundle",
+    "artifacts": []
 }
 
 contexts = [
@@ -177,6 +187,13 @@ contexts = [
         "machine": "raspberrypi4",
         "fstypes": "ext4",
         "wks_file": "sdimage-dual-raspberrypi.wks.in",
+        "artifacts": [
+            "core-image-minimal-raspberrypi4.rootfs.ext4",
+            "core-image-minimal-raspberrypi4.rootfs.manifest",
+            "core-image-minimal-raspberrypi4.rootfs.spdx.json",
+            "core-image-minimal-raspberrypi4.rootfs.testdata.json",
+            "update-bundle-raspberrypi4.raucb",
+        ],
     },
     {
         "layer": "meta-rauc-sunxi",
