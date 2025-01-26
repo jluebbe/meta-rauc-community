@@ -69,15 +69,15 @@ jobs:
       - name: Build rauc, rauc-native
         run: |
           source poky/oe-init-build-env build
-          bitbake rauc rauc-native -k || true
+          bitbake rauc rauc-native
       - name: Build core-image-minimal
         run: |
           source poky/oe-init-build-env build
-          bitbake core-image-minimal -k || true
+          bitbake core-image-minimal
       - name: Build RAUC Bundle
         run: |
           source poky/oe-init-build-env build
-          bitbake update-bundle -k || true
+          bitbake update-bundle
       - name: Cache Data
         env:
           CACHE_KEY: ${{ secrets.YOCTO_CACHE_KEY }}
@@ -92,3 +92,10 @@ jobs:
         run: |
           source poky/oe-init-build-env build
           tree --du -h tmp/deploy/images || true
+      - name: Upload Artifacts
+        uses: forrest-runner/upload-artifact@main
+        with:
+          path: |
+            build/tmp/deploy/images/core-image-minimal-beaglebone-yocto.rootfs.wic.xz
+            build/tmp/deploy/images/core-image-minimal-beaglebone-yocto.rootfs.spdx.tar.zst
+            build/tmp/deploy/images/update-bundle-beaglebone-yocto.raucb
