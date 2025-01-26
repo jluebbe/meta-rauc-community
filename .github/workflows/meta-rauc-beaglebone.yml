@@ -96,6 +96,6 @@ jobs:
         uses: forrest-runner/upload-artifact@main
         with:
           path: |
-            build/tmp/deploy/images/core-image-minimal-beaglebone-yocto.rootfs.wic.xz
-            build/tmp/deploy/images/core-image-minimal-beaglebone-yocto.rootfs.spdx.tar.zst
-            build/tmp/deploy/images/update-bundle-beaglebone-yocto.raucb
+            build/tmp/deploy/images/beaglebone-yocto/core-image-minimal-beaglebone-yocto.rootfs.wic.xz
+            build/tmp/deploy/images/beaglebone-yocto/core-image-minimal-beaglebone-yocto.rootfs.spdx.tar.zst
+            build/tmp/deploy/images/beaglebone-yocto/update-bundle-beaglebone-yocto.raucb
