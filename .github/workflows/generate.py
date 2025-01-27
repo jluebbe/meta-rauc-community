@@ -109,7 +109,7 @@ jobs:
         with:
           path: |
             «% for artifact in artifacts %»
-            build/tmp/deploy/images/«« artifact »»
+            build/tmp/deploy/images/«« machine »»/«« artifact »»
             «% endfor %»
       «% endif %»
 """.lstrip()
@@ -163,17 +163,49 @@ contexts = [
         "conf": [
             'IMAGE_BOOT_FILES:append = " boot.scr"',
         ],
+        "artifacts": [
+            "core-image-minimal-beaglebone-yocto.rootfs.wic.xz",
+            "core-image-minimal-beaglebone-yocto.rootfs.spdx.tar.zst",
+            "update-bundle-beaglebone-yocto.raucb",
+        ],
+    },
+    {
+        "layer": "meta-rauc-nxp",
+        **default_context,
+        "release": "styhead",
+        "layers": {
+            **default_layers,
+            # 2025-01-25: meta-freescale doesn't have a styhead branch
+            "meta-freescale": {
+                "repo": "https://github.com/Freescale/meta-freescale.git",
+                "branch": "master",
+            },
+            "meta-freescale-3rdparty": {
+                "repo": "https://github.com/Freescale/meta-freescale-3rdparty.git",
+                "branch": "master",
+            },
+        },
+        "machine": "olimex-imx8mp-evb",
+        "fstypes": "ext4",
+        "wks_file": "dual-imx-boot-bootpart.wks.in",
+        "conf": [
+            'INIT_MANAGER = "systemd"',
+            'IMAGE_BOOT_FILES:append = " boot.scr"',
+        ],
     },
     {
         "layer": "meta-rauc-qemux86",
         **default_context,
-        "fstypes": "tar.bz2 wic",
+        "fstypes": "tar.bz2 wic.zstd",
         "wks_file": "qemux86-grub-efi.wks",
         "conf": [
             'EXTRA_IMAGEDEPENDS += "ovmf"',
             'PREFERRED_RPROVIDER_virtual-grub-bootconf = "rauc-qemu-grubconf"',
         ],
         "bundle": "qemu-demo-bundle",
+        "artifacts": [
+            "core-image-minimal-qemux86-64.rootfs.wic.zstd",
+        ],
     },
     {
         "layer": "meta-rauc-raspberrypi",
@@ -193,6 +225,34 @@ contexts = [
             "core-image-minimal-raspberrypi4.rootfs.spdx.json",
             "core-image-minimal-raspberrypi4.rootfs.testdata.json",
             "update-bundle-raspberrypi4.raucb",
+        ],
+    },
+    {
+        "layer": "meta-rauc-rockchip",
+        **default_context,
+        "release": "styhead",
+        "layers": {
+            **default_layers,
+            "meta-arm": {
+                "repo": "https://git.yoctoproject.org/meta-arm.git",
+                "add": ["meta-arm-toolchain", "meta-arm"],
+            },
+            "meta-rockchip": {
+                "repo": "https://git.yoctoproject.org/meta-rockchip.git",
+            },
+        },
+        "machine": "rock-pi-4b",
+        "fstypes": "ext4",
+        "wks_file": "rockchip-dual.wks.in",
+        "conf": [
+            'SERIAL_CONSOLES="115200;ttyS2"',
+            'MACHINE_FEATURES:append = " rk-u-boot-env"',
+            'UBOOT_EXTLINUX_KERNEL_IMAGE="/${KERNEL_IMAGETYPE}"',
+            'UBOOT_EXTLINUX_ROOT="root=PARTLABEL=${bootpart}"',
+            'UBOOT_EXTLINUX_KERNEL_ARGS = "rootwait rw rootfstype=ext4 rauc.slot=${raucslot}"',
+            'WIC_CREATE_EXTRA_ARGS = "--no-fstab-update"',
+            'INIT_MANAGER = "systemd"',
+            'IMAGE_BOOT_FILES:append = " boot.scr"',
         ],
     },
     {
@@ -223,57 +283,13 @@ contexts = [
             'IMAGE_BOOT_FILES:append = " boot.scr"',
             'IMAGE_INSTALL:append = " rauc-grow-data-part"',
         ],
-    },
-    {
-        "layer": "meta-rauc-nxp",
-        **default_context,
-        "release": "styhead",
-        "layers": {
-            **default_layers,
-            # 2025-01-25: meta-freescale doesn't have a styhead branch
-            "meta-freescale": {
-                "repo": "https://github.com/Freescale/meta-freescale.git",
-                "branch": "master",
-            },
-            "meta-freescale-3rdparty": {
-                "repo": "https://github.com/Freescale/meta-freescale-3rdparty.git",
-                "branch": "master",
-            },
-        },
-        "machine": "olimex-imx8mp-evb",
-        "fstypes": "ext4",
-        "wks_file": "dual-imx-boot-bootpart.wks.in",
-        "conf": [
-            'INIT_MANAGER = "systemd"',
-            'IMAGE_BOOT_FILES:append = " boot.scr"',
-        ],
-    },
-    {
-        "layer": "meta-rauc-rockchip",
-        **default_context,
-        "release": "styhead",
-        "layers": {
-            **default_layers,
-            "meta-arm": {
-                "repo": "https://git.yoctoproject.org/meta-arm.git",
-                "add": ["meta-arm-toolchain", "meta-arm"],
-            },
-            "meta-rockchip": {
-                "repo": "https://git.yoctoproject.org/meta-rockchip.git",
-            },
-        },
-        "machine": "rock-pi-4b",
-        "fstypes": "ext4",
-        "wks_file": "rockchip-dual.wks.in",
-        "conf": [
-            'SERIAL_CONSOLES="115200;ttyS2"',
-            'MACHINE_FEATURES:append = " rk-u-boot-env"',
-            'UBOOT_EXTLINUX_KERNEL_IMAGE="/${KERNEL_IMAGETYPE}"',
-            'UBOOT_EXTLINUX_ROOT="root=PARTLABEL=${bootpart}"',
-            'UBOOT_EXTLINUX_KERNEL_ARGS = "rootwait rw rootfstype=ext4 rauc.slot=${raucslot}"',
-            'WIC_CREATE_EXTRA_ARGS = "--no-fstab-update"',
-            'INIT_MANAGER = "systemd"',
-            'IMAGE_BOOT_FILES:append = " boot.scr"',
+        "artifacts": [
+            "core-image-minimal-olinuxino-a10lime.rootfs.ext4",
+            "core-image-minimal-olinuxino-a10lime.rootfs.manifest",
+            "core-image-minimal-olinuxino-a10lime.rootfs.spdx.json",
+            "core-image-minimal-olinuxino-a10lime.rootfs.testdata.json",
+            "core-image-minimal-olinuxino-a10lime.rootfs.wic.gz",
+            "update-bundle-olinuxino-a10lime.raucb",
         ],
     },
 ]

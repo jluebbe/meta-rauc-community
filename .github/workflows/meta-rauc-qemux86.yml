@@ -54,7 +54,7 @@ jobs:
           echo 'DISTRO_FEATURES:remove = "alsa bluetooth usbgadget usbhost wifi nfs zeroconf pci 3g nfc x11 opengl ptest wayland vulkan"' >> conf/local.conf
           echo 'DISTRO_FEATURES:append = " rauc"' >> conf/local.conf
           echo 'IMAGE_INSTALL:append = " rauc"' >> conf/local.conf
-          echo 'IMAGE_FSTYPES = "tar.bz2 wic"' >> conf/local.conf
+          echo 'IMAGE_FSTYPES = "tar.bz2 wic.zstd"' >> conf/local.conf
           echo 'WKS_FILE = "qemux86-grub-efi.wks"' >> conf/local.conf
           echo 'EXTRA_IMAGEDEPENDS += "ovmf"' >> conf/local.conf
           echo 'PREFERRED_RPROVIDER_virtual-grub-bootconf = "rauc-qemu-grubconf"' >> conf/local.conf
@@ -69,15 +69,15 @@ jobs:
       - name: Build rauc, rauc-native
         run: |
           source poky/oe-init-build-env build
-          bitbake rauc rauc-native -k || true
+          bitbake rauc rauc-native
       - name: Build core-image-minimal
         run: |
           source poky/oe-init-build-env build
-          bitbake core-image-minimal -k || true
+          bitbake core-image-minimal
       - name: Build RAUC Bundle
         run: |
           source poky/oe-init-build-env build
-          bitbake qemu-demo-bundle -k || true
+          bitbake qemu-demo-bundle
       - name: Cache Data
         env:
           CACHE_KEY: ${{ secrets.YOCTO_CACHE_KEY }}
@@ -92,3 +92,8 @@ jobs:
         run: |
           source poky/oe-init-build-env build
           tree --du -h tmp/deploy/images || true
+      - name: Upload Artifacts
+        uses: forrest-runner/upload-artifact@main
+        with:
+          path: |
+            build/tmp/deploy/images/None/core-image-minimal-qemux86-64.rootfs.wic.zstd
