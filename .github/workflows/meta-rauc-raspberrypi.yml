@@ -98,8 +98,8 @@ jobs:
         uses: forrest-runner/upload-artifact@main
         with:
           path: |
-            build/tmp/deploy/images/core-image-minimal-raspberrypi4.rootfs.ext4
-            build/tmp/deploy/images/core-image-minimal-raspberrypi4.rootfs.manifest
-            build/tmp/deploy/images/core-image-minimal-raspberrypi4.rootfs.spdx.json
-            build/tmp/deploy/images/core-image-minimal-raspberrypi4.rootfs.testdata.json
-            build/tmp/deploy/images/update-bundle-raspberrypi4.raucb
+            build/tmp/deploy/images/raspberrypi4/core-image-minimal-raspberrypi4.rootfs.ext4
+            build/tmp/deploy/images/raspberrypi4/core-image-minimal-raspberrypi4.rootfs.manifest
+            build/tmp/deploy/images/raspberrypi4/core-image-minimal-raspberrypi4.rootfs.spdx.json
+            build/tmp/deploy/images/raspberrypi4/core-image-minimal-raspberrypi4.rootfs.testdata.json
+            build/tmp/deploy/images/raspberrypi4/update-bundle-raspberrypi4.raucb
