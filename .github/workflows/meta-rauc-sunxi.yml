@@ -105,3 +105,13 @@ jobs:
         run: |
           source poky/oe-init-build-env build
           tree --du -h tmp/deploy/images || true
+      - name: Upload Artifacts
+        uses: forrest-runner/upload-artifact@main
+        with:
+          path: |
+            build/tmp/deploy/images/olinuxino-a10lime/core-image-minimal-olinuxino-a10lime.rootfs.ext4
+            build/tmp/deploy/images/olinuxino-a10lime/core-image-minimal-olinuxino-a10lime.rootfs.manifest
+            build/tmp/deploy/images/olinuxino-a10lime/core-image-minimal-olinuxino-a10lime.rootfs.spdx.json
+            build/tmp/deploy/images/olinuxino-a10lime/core-image-minimal-olinuxino-a10lime.rootfs.testdata.json
+            build/tmp/deploy/images/olinuxino-a10lime/core-image-minimal-olinuxino-a10lime.rootfs.wic.gz
+            build/tmp/deploy/images/olinuxino-a10lime/update-bundle-olinuxino-a10lime.raucb
