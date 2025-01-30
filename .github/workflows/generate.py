@@ -194,6 +194,17 @@ contexts = [
         ],
     },
     {
+        "layer": "meta-rauc-qemuarm",
+        **default_context,
+        "machine": "raspberrypi4",
+        "fstypes": "wic.zstd",
+        "wks_file": "rauc-qemuarm.wks",
+        "bundle": "update-bundle",
+        "artifacts": [
+            "core-image-minimal-qemuarm-64.rootfs.wic.zstd",
+        ],
+    },
+    {
         "layer": "meta-rauc-qemux86",
         **default_context,
         "fstypes": "tar.bz2 wic.zstd",
