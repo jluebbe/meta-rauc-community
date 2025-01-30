@@ -105,7 +105,7 @@ jobs:
           tree --du -h tmp/deploy/images || true
       «% if artifacts %»
       - name: Upload Artifacts
-        uses: forrest-runner/upload-artifact@main
+        uses: jluebbe/forrest-upload-artifact@summary
         with:
           path: |
             «% for artifact in artifacts %»
