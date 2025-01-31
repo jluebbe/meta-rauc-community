@@ -37,7 +37,7 @@ jobs:
       - name: Clone meta-rauc
         run: git clone --shared --reference-if-able /srv/shared-git/meta-rauc.git -b styhead https://github.com/rauc/meta-rauc.git
       - name: Clone meta-freescale
-        run: git clone --shared --reference-if-able /srv/shared-git/meta-freescale.git -b master https://github.com/Freescale/meta-freescale.git
+        run: git clone --shared --reference-if-able /srv/shared-git/meta-freescale.git -b styhead https://github.com/Freescale/meta-freescale.git
       - name: Clone meta-freescale-3rdparty
         run: git clone --shared --reference-if-able /srv/shared-git/meta-freescale-3rdparty.git -b master https://github.com/Freescale/meta-freescale-3rdparty.git
       - name: Initialize build directory
@@ -61,7 +61,7 @@ jobs:
           echo 'MACHINE = "olimex-imx8mp-evb"' >> conf/local.conf
           echo 'DISTRO_FEATURES:append = " rauc"' >> conf/local.conf
           echo 'IMAGE_INSTALL:append = " rauc"' >> conf/local.conf
-          echo 'IMAGE_FSTYPES = "ext4"' >> conf/local.conf
+          echo 'IMAGE_FSTYPES = "ext4 wic.zst"' >> conf/local.conf
           echo 'WKS_FILE = "dual-imx-boot-bootpart.wks.in"' >> conf/local.conf
           echo 'INIT_MANAGER = "systemd"' >> conf/local.conf
           echo 'IMAGE_BOOT_FILES:append = " boot.scr"' >> conf/local.conf

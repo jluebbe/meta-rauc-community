@@ -52,10 +52,10 @@ jobs:
             echo 'INHERIT += "rm_work"' >> conf/auto.conf
           fi
           echo 'DISTRO_FEATURES:remove = "alsa bluetooth usbgadget usbhost wifi nfs zeroconf pci 3g nfc x11 opengl ptest wayland vulkan"' >> conf/local.conf
-          echo 'MACHINE = "raspberrypi4"' >> conf/local.conf
+          echo 'MACHINE = "qemuarm"' >> conf/local.conf
           echo 'DISTRO_FEATURES:append = " rauc"' >> conf/local.conf
           echo 'IMAGE_INSTALL:append = " rauc"' >> conf/local.conf
-          echo 'IMAGE_FSTYPES = "wic.zstd"' >> conf/local.conf
+          echo 'IMAGE_FSTYPES = "wic.zst"' >> conf/local.conf
           echo 'WKS_FILE = "rauc-qemuarm.wks"' >> conf/local.conf
       - name: Show configuration files
         run: |
@@ -95,4 +95,4 @@ jobs:
         uses: jluebbe/forrest-upload-artifact@summary
         with:
           path: |
-            build/tmp/deploy/images/raspberrypi4/core-image-minimal-qemuarm-64.rootfs.wic.zstd
+            build/tmp/deploy/images/qemuarm/core-image-minimal-qemuarm-64.rootfs.wic.zst

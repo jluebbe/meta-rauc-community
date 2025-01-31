@@ -158,7 +158,7 @@ contexts = [
         **default_context,
         "release": "scarthgap",
         "machine": "beaglebone-yocto",
-        "fstypes": "ext4",
+        "fstypes": "ext4 wic.zst",
         "wks_file": "beaglebone-yocto-dual.wks.in",
         "conf": [
             'IMAGE_BOOT_FILES:append = " boot.scr"',
@@ -175,18 +175,18 @@ contexts = [
         "release": "styhead",
         "layers": {
             **default_layers,
-            # 2025-01-25: meta-freescale doesn't have a styhead branch
             "meta-freescale": {
                 "repo": "https://github.com/Freescale/meta-freescale.git",
-                "branch": "master",
+                "branch": "styhead",
             },
+            # 2025-01-25: meta-freescale-3rdparty doesn't have a styhead branch
             "meta-freescale-3rdparty": {
                 "repo": "https://github.com/Freescale/meta-freescale-3rdparty.git",
                 "branch": "master",
             },
         },
         "machine": "olimex-imx8mp-evb",
-        "fstypes": "ext4",
+        "fstypes": "ext4 wic.zst",
         "wks_file": "dual-imx-boot-bootpart.wks.in",
         "conf": [
             'INIT_MANAGER = "systemd"',
@@ -196,18 +196,18 @@ contexts = [
     {
         "layer": "meta-rauc-qemuarm",
         **default_context,
-        "machine": "raspberrypi4",
-        "fstypes": "wic.zstd",
+        "machine": "qemuarm",
+        "fstypes": "wic.zst",
         "wks_file": "rauc-qemuarm.wks",
         "bundle": "update-bundle",
         "artifacts": [
-            "core-image-minimal-qemuarm-64.rootfs.wic.zstd",
+            "core-image-minimal-qemuarm-64.rootfs.wic.zst",
         ],
     },
     {
         "layer": "meta-rauc-qemux86",
         **default_context,
-        "fstypes": "tar.bz2 wic.zstd",
+        "fstypes": "tar.bz2 wic.zst",
         "wks_file": "qemux86-grub-efi.wks",
         "conf": [
             'EXTRA_IMAGEDEPENDS += "ovmf"',
@@ -215,7 +215,7 @@ contexts = [
         ],
         "bundle": "qemu-demo-bundle",
         "artifacts": [
-            "core-image-minimal-qemux86-64.rootfs.wic.zstd",
+            "core-image-minimal-qemux86-64.rootfs.wic.zst",
         ],
     },
     {
@@ -228,7 +228,7 @@ contexts = [
             },
         },
         "machine": "raspberrypi4",
-        "fstypes": "ext4",
+        "fstypes": "ext4 wic.zst",
         "wks_file": "sdimage-dual-raspberrypi.wks.in",
         "artifacts": [
             "core-image-minimal-raspberrypi4.rootfs.ext4",
@@ -287,7 +287,7 @@ contexts = [
             },
         },
         "machine": "olinuxino-a10lime",
-        "fstypes": "ext4",
+        "fstypes": "wic.zst",
         "wks_file": "sunxi-dual-image.wks.in",
         "conf": [
             'INIT_MANAGER = "systemd"',
@@ -295,11 +295,10 @@ contexts = [
             'IMAGE_INSTALL:append = " rauc-grow-data-part"',
         ],
         "artifacts": [
-            "core-image-minimal-olinuxino-a10lime.rootfs.ext4",
             "core-image-minimal-olinuxino-a10lime.rootfs.manifest",
             "core-image-minimal-olinuxino-a10lime.rootfs.spdx.json",
             "core-image-minimal-olinuxino-a10lime.rootfs.testdata.json",
-            "core-image-minimal-olinuxino-a10lime.rootfs.wic.gz",
+            "core-image-minimal-olinuxino-a10lime.rootfs.wic.zst",
             "update-bundle-olinuxino-a10lime.raucb",
         ],
     },

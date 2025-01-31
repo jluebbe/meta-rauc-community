@@ -55,7 +55,7 @@ jobs:
           echo 'MACHINE = "beaglebone-yocto"' >> conf/local.conf
           echo 'DISTRO_FEATURES:append = " rauc"' >> conf/local.conf
           echo 'IMAGE_INSTALL:append = " rauc"' >> conf/local.conf
-          echo 'IMAGE_FSTYPES = "ext4"' >> conf/local.conf
+          echo 'IMAGE_FSTYPES = "ext4 wic.zst"' >> conf/local.conf
           echo 'WKS_FILE = "beaglebone-yocto-dual.wks.in"' >> conf/local.conf
           echo 'IMAGE_BOOT_FILES:append = " boot.scr"' >> conf/local.conf
       - name: Show configuration files

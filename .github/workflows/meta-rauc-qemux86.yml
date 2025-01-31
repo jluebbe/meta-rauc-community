@@ -54,7 +54,7 @@ jobs:
           echo 'DISTRO_FEATURES:remove = "alsa bluetooth usbgadget usbhost wifi nfs zeroconf pci 3g nfc x11 opengl ptest wayland vulkan"' >> conf/local.conf
           echo 'DISTRO_FEATURES:append = " rauc"' >> conf/local.conf
           echo 'IMAGE_INSTALL:append = " rauc"' >> conf/local.conf
-          echo 'IMAGE_FSTYPES = "tar.bz2 wic.zstd"' >> conf/local.conf
+          echo 'IMAGE_FSTYPES = "tar.bz2 wic.zst"' >> conf/local.conf
           echo 'WKS_FILE = "qemux86-grub-efi.wks"' >> conf/local.conf
           echo 'EXTRA_IMAGEDEPENDS += "ovmf"' >> conf/local.conf
           echo 'PREFERRED_RPROVIDER_virtual-grub-bootconf = "rauc-qemu-grubconf"' >> conf/local.conf
@@ -96,4 +96,4 @@ jobs:
         uses: jluebbe/forrest-upload-artifact@summary
         with:
           path: |
-            build/tmp/deploy/images/None/core-image-minimal-qemux86-64.rootfs.wic.zstd
+            build/tmp/deploy/images/None/core-image-minimal-qemux86-64.rootfs.wic.zst

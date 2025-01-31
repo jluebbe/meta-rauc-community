@@ -66,7 +66,7 @@ jobs:
           echo 'MACHINE = "olinuxino-a10lime"' >> conf/local.conf
           echo 'DISTRO_FEATURES:append = " rauc"' >> conf/local.conf
           echo 'IMAGE_INSTALL:append = " rauc"' >> conf/local.conf
-          echo 'IMAGE_FSTYPES = "ext4"' >> conf/local.conf
+          echo 'IMAGE_FSTYPES = "wic.zst"' >> conf/local.conf
           echo 'WKS_FILE = "sunxi-dual-image.wks.in"' >> conf/local.conf
           echo 'INIT_MANAGER = "systemd"' >> conf/local.conf
           echo 'IMAGE_BOOT_FILES:append = " boot.scr"' >> conf/local.conf
@@ -109,9 +109,8 @@ jobs:
         uses: jluebbe/forrest-upload-artifact@summary
         with:
           path: |
-            build/tmp/deploy/images/olinuxino-a10lime/core-image-minimal-olinuxino-a10lime.rootfs.ext4
             build/tmp/deploy/images/olinuxino-a10lime/core-image-minimal-olinuxino-a10lime.rootfs.manifest
             build/tmp/deploy/images/olinuxino-a10lime/core-image-minimal-olinuxino-a10lime.rootfs.spdx.json
             build/tmp/deploy/images/olinuxino-a10lime/core-image-minimal-olinuxino-a10lime.rootfs.testdata.json
-            build/tmp/deploy/images/olinuxino-a10lime/core-image-minimal-olinuxino-a10lime.rootfs.wic.gz
+            build/tmp/deploy/images/olinuxino-a10lime/core-image-minimal-olinuxino-a10lime.rootfs.wic.zst
             build/tmp/deploy/images/olinuxino-a10lime/update-bundle-olinuxino-a10lime.raucb
