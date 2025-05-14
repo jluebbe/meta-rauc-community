@@ -8,6 +8,7 @@ on:
   push:
     branches:
       - master
+      - forrest
     paths:
       - '.github/workflows/meta-rauc-qemux86.yml'
       - 'meta-rauc-qemux86/**'
