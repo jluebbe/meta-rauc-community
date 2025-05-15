@@ -171,6 +171,30 @@ contexts = [
         ],
     },
     {
+        "layer": "meta-rauc-nxp",
+        **default_context,
+        "release": "styhead",
+        "layers": {
+            **default_layers,
+            "meta-freescale": {
+                "repo": "https://github.com/Freescale/meta-freescale.git",
+                "branch": "styhead",
+            },
+            # 2025-01-25: meta-freescale-3rdparty doesn't have a styhead branch
+            "meta-freescale-3rdparty": {
+                "repo": "https://github.com/Freescale/meta-freescale-3rdparty.git",
+                "branch": "master",
+            },
+        },
+        "machine": "olimex-imx8mp-evb",
+        "fstypes": "ext4 wic.zst",
+        "wks_file": "dual-imx-boot-bootpart.wks.in",
+        "conf": [
+            'INIT_MANAGER = "systemd"',
+            'IMAGE_BOOT_FILES:append = " boot.scr"',
+        ],
+    },
+    {
         "layer": "meta-rauc-qemuarm",
         **default_context,
         "machine": "qemuarm",
@@ -219,6 +243,70 @@ contexts = [
             "core-image-minimal-raspberrypi4.rootfs.testdata.json",
             "core-image-minimal-raspberrypi4.rootfs.wic.zst",
             "update-bundle-raspberrypi4.raucb",
+        ],
+    },
+    {
+        "layer": "meta-rauc-rockchip",
+        **default_context,
+        "release": "styhead",
+        "layers": {
+            **default_layers,
+            "meta-arm": {
+                "repo": "https://git.yoctoproject.org/meta-arm.git",
+                "add": ["meta-arm-toolchain", "meta-arm"],
+            },
+            "meta-rockchip": {
+                "repo": "https://git.yoctoproject.org/meta-rockchip.git",
+            },
+        },
+        "machine": "rock-pi-4b",
+        "fstypes": "ext4",
+        "wks_file": "rockchip-dual.wks.in",
+        "conf": [
+            'SERIAL_CONSOLES="115200;ttyS2"',
+            'MACHINE_FEATURES:append = " rk-u-boot-env"',
+            'UBOOT_EXTLINUX_KERNEL_IMAGE="/${KERNEL_IMAGETYPE}"',
+            'UBOOT_EXTLINUX_ROOT="root=PARTLABEL=${bootpart}"',
+            'UBOOT_EXTLINUX_KERNEL_ARGS = "rootwait rw rootfstype=ext4 rauc.slot=${raucslot}"',
+            'WIC_CREATE_EXTRA_ARGS = "--no-fstab-update"',
+            'INIT_MANAGER = "systemd"',
+            'IMAGE_BOOT_FILES:append = " boot.scr"',
+        ],
+    },
+    {
+        "layer": "meta-rauc-sunxi",
+        **default_context,
+        "release": "styhead",
+        "layers": {
+            **default_layers,
+            "meta-arm": {
+                "repo": "https://git.yoctoproject.org/meta-arm.git",
+                "add": ["meta-arm-toolchain", "meta-arm"],
+            },
+            "meta-openembedded": {
+                "repo": "https://git.openembedded.org/meta-openembedded.git",
+                "add": ["meta-oe", "meta-python"],
+            },
+            "meta-sunxi": {
+                "repo": "https://github.com/linux-sunxi/meta-sunxi.git",
+                # 2025-01-25: meta-sunxi doesn't have a styhead branch
+                "branch": "master",
+            },
+        },
+        "machine": "olinuxino-a10lime",
+        "fstypes": "wic.zst",
+        "wks_file": "sunxi-dual-image.wks.in",
+        "conf": [
+            'INIT_MANAGER = "systemd"',
+            'IMAGE_BOOT_FILES:append = " boot.scr"',
+            'IMAGE_INSTALL:append = " rauc-grow-data-part"',
+        ],
+        "artifacts": [
+            "core-image-minimal-olinuxino-a10lime.rootfs.manifest",
+            "core-image-minimal-olinuxino-a10lime.rootfs.spdx.json",
+            "core-image-minimal-olinuxino-a10lime.rootfs.testdata.json",
+            "core-image-minimal-olinuxino-a10lime.rootfs.wic.zst",
+            "update-bundle-olinuxino-a10lime.raucb",
         ],
     },
 ]
