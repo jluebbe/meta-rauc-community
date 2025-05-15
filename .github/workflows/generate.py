@@ -277,7 +277,6 @@ contexts = [
     {
         "layer": "meta-rauc-sunxi",
         **default_context,
-        "release": "styhead",
         "layers": {
             **default_layers,
             "meta-arm": {
@@ -290,8 +289,6 @@ contexts = [
             },
             "meta-sunxi": {
                 "repo": "https://github.com/linux-sunxi/meta-sunxi.git",
-                # 2025-01-25: meta-sunxi doesn't have a styhead branch
-                "branch": "master",
             },
         },
         "machine": "olinuxino-a10lime",
