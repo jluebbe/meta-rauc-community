@@ -8,6 +8,7 @@ on:
   push:
     branches:
       - master
+      - forrest
     paths:
       - '.github/workflows/meta-rauc-rockchip.yml'
       - 'meta-rauc-rockchip/**'

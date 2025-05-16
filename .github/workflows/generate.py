@@ -292,7 +292,7 @@ contexts = [
             },
         },
         "machine": "olinuxino-a10lime",
-        "fstypes": "wic.zst",
+        "fstypes": "ext4 wic.zst",
         "wks_file": "sunxi-dual-image.wks.in",
         "conf": [
             'INIT_MANAGER = "systemd"',

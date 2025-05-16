@@ -8,6 +8,7 @@ on:
   push:
     branches:
       - master
+      - forrest
     paths:
       - '.github/workflows/meta-rauc-sunxi.yml'
       - 'meta-rauc-sunxi/**'
@@ -70,7 +71,7 @@ jobs:
           echo 'MACHINE = "olinuxino-a10lime"' >> conf/local.conf
           echo 'DISTRO_FEATURES:append = " rauc"' >> conf/local.conf
           echo 'IMAGE_INSTALL:append = " rauc"' >> conf/local.conf
-          echo 'IMAGE_FSTYPES = "wic.zst"' >> conf/local.conf
+          echo 'IMAGE_FSTYPES = "ext4 wic.zst"' >> conf/local.conf
           echo 'WKS_FILE = "sunxi-dual-image.wks.in"' >> conf/local.conf
           echo 'INIT_MANAGER = "systemd"' >> conf/local.conf
           echo 'IMAGE_BOOT_FILES:append = " boot.scr"' >> conf/local.conf
